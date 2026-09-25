@@ -7,13 +7,7 @@ export const metadata: Metadata = {
   description: "The official digital home of BEGAIMEDER ACADEMY — a KG through Grade 8 learning community.",
   keywords: ["BEGAIMEDER ACADEMY", "school", "KG", "Grade 8", "education", "Ethiopia"],
   alternates: { canonical: "/" },
-  openGraph: {
-    title: "BEGAIMEDER ACADEMY",
-    description: "A thoughtful learning community for children from KG through Grade 8.",
-    type: "website",
-    url: "https://begaimederacademy.com",
-    siteName: "BEGAIMEDER ACADEMY",
-  },
+  openGraph: { title: "BEGAIMEDER ACADEMY", description: "A thoughtful learning community for children from KG through Grade 8.", type: "website", url: "https://begaimederacademy.com", siteName: "BEGAIMEDER ACADEMY" },
   twitter: { card: "summary_large_image", title: "BEGAIMEDER ACADEMY", description: "KG through Grade 8 — learning, belonging and becoming." },
   robots: { index: true, follow: true },
 };
