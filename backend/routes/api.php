@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\MediaController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\FormSubmissionController;
+use App\Http\Controllers\Api\MediaAlbumController;
+use App\Http\Controllers\Api\RevisionController;
 use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->middleware('throttle:api')->group(function(){
  Route::post('/auth/login',[AuthController::class,'login'])->middleware('throttle:auth');
@@ -18,6 +20,8 @@ Route::prefix('v1')->middleware('throttle:api')->group(function(){
  Route::get('/content',[ContentController::class,'index']);
  Route::get('/content/{slug}',[ContentController::class,'show']);
  Route::get('/events',[EventController::class,'index']);
+ Route::get('/albums',[MediaAlbumController::class,'index']);
+ Route::get('/albums/{slug}',[MediaAlbumController::class,'show']);
  Route::post('/forms',[FormSubmissionController::class,'store'])->middleware('throttle:api');
  Route::middleware('auth:sanctum')->group(function(){
   Route::apiResource('pages',PageController::class)->except(['show']);
@@ -34,6 +38,11 @@ Route::prefix('v1')->middleware('throttle:api')->group(function(){
   Route::get('/admin/settings',[AdminController::class,'settings']);
   Route::put('/admin/settings/{key}',[AdminController::class,'updateSetting']);
   Route::get('/admin/audit-logs',[AdminController::class,'audit']);
+  Route::apiResource('albums',MediaAlbumController::class)->except(['index','show']);
+  Route::post('/albums/{album}/media',[MediaAlbumController::class,'attach']);
+  Route::get('/revisions/{type}/{id}',[RevisionController::class,'index']);
+  Route::get('/revisions/{revision}',[RevisionController::class,'show']);
+  Route::post('/revisions/{revision}/restore',[RevisionController::class,'restore']);
   Route::get('/admin/forms',[FormSubmissionController::class,'index']);
   Route::patch('/admin/forms/{submission}',[FormSubmissionController::class,'update']);
  });
