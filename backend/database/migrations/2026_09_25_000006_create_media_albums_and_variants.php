@@ -1,0 +1,8 @@
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+return new class extends Migration {
+ public function up():void{Schema::create('media_albums',function(Blueprint $t){$t->id();$t->string('title');$t->string('slug')->unique();$t->text('description')->nullable();$t->foreignId('cover_media_id')->nullable()->constrained('media_assets')->nullOnDelete();$t->string('category')->nullable()->index();$t->timestamp('captured_at')->nullable();$t->string('visibility')->default('public')->index();$t->string('status')->default('published')->index();$t->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();$t->timestamps();});Schema::create('album_media',function(Blueprint $t){$t->foreignId('media_album_id')->constrained('media_albums')->cascadeOnDelete();$t->foreignId('media_asset_id')->constrained('media_assets')->cascadeOnDelete();$t->unsignedInteger('sort_order')->default(0);$t->text('caption')->nullable();$t->primary(['media_album_id','media_asset_id']);$t->index(['media_album_id','sort_order']);});Schema::create('media_variants',function(Blueprint $t){$t->id();$t->foreignId('media_asset_id')->constrained()->cascadeOnDelete();$t->string('kind');$t->string('path');$t->unsignedInteger('width')->nullable();$t->unsignedInteger('height')->nullable();$t->string('mime_type');$t->unsignedBigInteger('size')->default(0);$t->timestamps();$t->unique(['media_asset_id','kind']);});}
+ public function down():void{Schema::dropIfExists('media_variants');Schema::dropIfExists('album_media');Schema::dropIfExists('media_albums');}
+};
