@@ -10,6 +10,8 @@ const groups = [
     ["/admin/content","Content Studio",FileText],
     ["/admin/pages","Pages & Builder",Globe2],
     ["/admin/media","Media Library",FileImage],
+    ["/admin/media/albums","Albums",FileImage],
+    ["/admin/publishing","Publishing",CalendarDays],
     ["/admin/events","Events",CalendarDays],
     ["/admin/admissions","Admissions",Inbox],
   ]},
