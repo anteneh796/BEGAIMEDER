@@ -1,0 +1,2 @@
+import { NextResponse } from "next/server";
+export async function POST(request:Request){const backend=process.env.BEGAIMEDER_API_URL;if(backend){try{const body=await request.text();await fetch(`${backend.replace(/\/$/,"")}/api/v1/analytics/page-view`,{method:"POST",headers:{"content-type":"application/json"},body,cache:"no-store"});}catch{}}return new NextResponse(null,{status:204});}
