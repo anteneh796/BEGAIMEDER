@@ -1,0 +1,16 @@
+<?php
+namespace App\Http\Controllers\Api;
+use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
+use App\Models\Content;
+use App\Models\Revision;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+class ContentController extends Controller {
+ public function index(Request $request){$q=Content::with(['author','reviewer']);if(!$request->user())$q->where('status','published')->whereNotNull('published_at');if($request->filled('type'))$q->where('type',$request->string('type'));return response()->json($q->latest()->paginate(min($request->integer('per_page',15),100)));}
+ public function show(string $slug){return response()->json(Content::where('slug',$slug)->where('status','published')->whereNotNull('published_at')->firstOrFail()->load('author'));}
+ public function store(Request $request){abort_unless($request->user()->canManage('content.create'),403);$d=$request->validate(['type'=>'required|in:story,news,announcement,event,achievement','title'=>'required|string|max:255','slug'=>'nullable|string|max:255|unique:contents,slug','excerpt'=>'nullable|string|max:1000','body'=>'required|string','status'=>'nullable|in:draft,review,approved,published,scheduled,archived','seo'=>'nullable|array','featured'=>'boolean','scheduled_for'=>'nullable|date']);$d['slug']=$d['slug']??Str::slug($d['title']);$d['author_id']=$request->user()->id;if(($d['status']??'draft')==='published')$d['published_at']=now();$c=Content::create($d);$this->revision($c,$request,'Initial version');return response()->json($c,201);}
+ public function update(Request $request,Content $content){abort_unless($request->user()->canManage('content.edit'),403);$d=$request->validate(['title'=>'sometimes|required|string|max:255','slug'=>'sometimes|required|string|max:255|unique:contents,slug,'.$content->id,'excerpt'=>'nullable|string|max:1000','body'=>'sometimes|required|string','status'=>'sometimes|in:draft,review,approved,published,scheduled,archived','seo'=>'nullable|array','featured'=>'boolean','scheduled_for'=>'nullable|date']);if(($d['status']??null)==='published'&&!$content->published_at)$d['published_at']=now();$content->update($d);$this->revision($content->fresh(),$request,'Content updated');return response()->json($content->fresh());}
+ public function destroy(Request $request,Content $content){abort_unless($request->user()->canManage('content.delete'),403);$id=$content->id;$content->delete();AuditLog::create(['user_id'=>$request->user()->id,'action'=>'deleted','auditable_type'=>Content::class,'auditable_id'=>$id,'ip_address'=>$request->ip(),'user_agent'=>$request->userAgent()]);return response()->noContent();}
+ private function revision(Content $c,Request $r,string $summary):void{$v=((int)$c->revisions()->max('version'))+1;Revision::create(['revisionable_type'=>Content::class,'revisionable_id'=>$c->id,'version'=>$v,'snapshot'=>$c->toArray(),'created_by'=>$r->user()->id,'change_summary'=>$summary]);AuditLog::create(['user_id'=>$r->user()->id,'action'=>'updated','auditable_type'=>Content::class,'auditable_id'=>$c->id,'ip_address'=>$r->ip(),'user_agent'=>$r->userAgent()]);}
+}
