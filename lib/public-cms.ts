@@ -1,0 +1,6 @@
+import { albums as fallbackAlbums, mediaAssets as fallbackAssets } from "@/lib/media";
+const API=process.env.BEGAIMEDER_API_URL;
+async function request<T>(path:string):Promise<T|null>{if(!API)return null;try{const res=await fetch(`${API.replace(/\/$/,"")}/api/v1/${path}`,{next:{revalidate:60}});if(!res.ok)return null;return await res.json() as T;}catch{return null;}}
+type ApiAlbum={id:number;title:string;slug:string;description:string|null;cover?:{path:string}|null;media?:Array<{id:number;title:string;type:string;path:string;alt_text:string|null;caption:string|null}>};
+export async function getPublishedAlbums(){const data=await request<{data:ApiAlbum[]}>("albums");if(!data?.data)return fallbackAlbums;return data.data.map(a=>({id:String(a.id),slug:a.slug,title:a.title,description:a.description??"",coverUrl:a.cover?.path??fallbackAlbums[0]?.coverUrl??"",assetCount:a.media?.length??0,publishedAt:"Published"}));}
+export async function getPublishedAlbum(slug:string){const data=await request<ApiAlbum>(`albums/${encodeURIComponent(slug)}`);if(!data)return fallbackAlbums.find(a=>a.slug===slug)??null;return data;}
