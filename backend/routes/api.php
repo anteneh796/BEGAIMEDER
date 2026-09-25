@@ -9,8 +9,11 @@ use App\Http\Controllers\Api\FormSubmissionController;
 use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->middleware('throttle:api')->group(function(){
  Route::post('/auth/login',[AuthController::class,'login'])->middleware('throttle:auth');
+ Route::post('/auth/forgot-password',[AuthController::class,'forgotPassword'])->middleware('throttle:auth');
+ Route::post('/auth/reset-password',[AuthController::class,'resetPassword'])->middleware('throttle:auth');
  Route::post('/auth/logout',[AuthController::class,'logout'])->middleware('auth:sanctum');
  Route::get('/auth/me',[AuthController::class,'me'])->middleware('auth:sanctum');
+ Route::get('/auth/email/verify/{id}/{hash}',[AuthController::class,'verifyEmail'])->middleware(['auth:sanctum','signed'])->name('verification.verify');
  Route::get('/pages/{slug}',[PageController::class,'show']);
  Route::get('/content',[ContentController::class,'index']);
  Route::get('/content/{slug}',[ContentController::class,'show']);
@@ -22,6 +25,9 @@ Route::prefix('v1')->middleware('throttle:api')->group(function(){
   Route::apiResource('media',MediaController::class)->except(['show']);
   Route::apiResource('events',EventController::class)->except(['index']);
   Route::get('/media/{media}/download',[MediaController::class,'download']);
+  Route::post('/auth/2fa/setup',[AuthController::class,'setupTwoFactor']);
+  Route::post('/auth/2fa/confirm',[AuthController::class,'confirmTwoFactor']);
+  Route::post('/auth/2fa/disable',[AuthController::class,'disableTwoFactor']);
   Route::get('/admin/users',[AdminController::class,'users']);
   Route::get('/admin/roles',[AdminController::class,'roles']);
   Route::get('/admin/permissions',[AdminController::class,'permissions']);
