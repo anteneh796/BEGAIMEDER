@@ -5,6 +5,7 @@ import { useState } from "react";
 
 const nav = [
   ["Overview", LayoutDashboard],
+  ["Content Studio", FileText],
   ["Pages", FileText],
   ["Stories", FileText],
   ["Media Library", FileImage],
@@ -24,7 +25,7 @@ export default function AdminPage() {
       <aside className={open ? "admin-sidebar open" : "admin-sidebar"}>
         <div className="admin-brand"><span className="brand-mark">B</span><span><strong>BEGAIMEDER</strong><small>CMS</small></span><button onClick={() => setOpen(false)} aria-label="Close menu"><X size={18}/></button></div>
         <div className="admin-nav-label">Workspace</div>
-        <nav>{nav.map(([label, Icon], i) => <a className={i === 0 ? "active" : ""} href="#" key={label}><Icon size={17}/>{label}</a>)}</nav>
+        <nav>{nav.map(([label, Icon], i) => <a className={i === 0 ? "active" : ""} href={label === "Content Studio" ? "/admin/content" : "#"} key={label}><Icon size={17}/>{label}</a>)}</nav>
         <div className="admin-nav-label">Security</div>
         <nav><a href="#"><ShieldCheck size={17}/>Roles & permissions</a><a href="#"><FileText size={17}/>Audit log</a></nav>
         <div className="admin-bottom"><a href="/"><Globe2 size={17}/>View website</a><a href="#"><LogOut size={17}/>Sign out</a></div>
