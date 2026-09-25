@@ -3,7 +3,7 @@ namespace App\Jobs;
 use App\Models\Content;
 use App\Models\Page;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\InteractsWithQueue;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 class PublishScheduledContent implements ShouldQueue {
