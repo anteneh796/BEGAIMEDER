@@ -1,0 +1,13 @@
+{
+  "name":"begaimeder/cms-backend",
+  "type":"project",
+  "description":"BEGAIMEDER ACADEMY CMS API built with Laravel.",
+  "license":"MIT",
+  "require":{"php":"^8.2","laravel/framework":"^12.0","laravel/sanctum":"^4.0"},
+  "require-dev":{"fakerphp/faker":"^1.23","laravel/pint":"^1.24","laravel/sail":"^1.41","mockery/mockery":"^1.6","nunomaduro/collision":"^8.6","phpunit/phpunit":"^11.5"},
+  "autoload":{"psr-4":{"App\\":"app/","Database\\Factories\\":"database/factories/","Database\\Seeders\\":"database/seeders/"}},
+  "autoload-dev":{"psr-4":{"Tests\\":"tests/"}},
+  "scripts":{"test":["@php artisan config:clear","@php artisan test"]},
+  "config":{"optimize-autoloader":true,"preferred-install":"dist","sort-packages":true},
+  "minimum-stability":"stable","prefer-stable":true
+}
