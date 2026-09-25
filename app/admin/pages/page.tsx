@@ -1,0 +1,17 @@
+"use client";
+import {useMemo,useState} from "react";
+import {ArrowDown,ArrowUp,Eye,GripVertical,Plus,Save,Settings2,Trash2} from "lucide-react";
+import {managedPages,PageBlock,BlockType} from "@/lib/page-builder";
+const labels:Record<BlockType,string>={hero:"Hero",rich_text:"Rich text",image:"Image",gallery:"Gallery",stats:"Statistics",cta:"Call to action",feature_grid:"Feature grid"};
+const palette:BlockType[]=["hero","rich_text","image","gallery","stats","cta","feature_grid"];
+export default function PagesAdmin(){
+ const [pageId,setPageId]=useState(managedPages[0].id),[blocks,setBlocks]=useState<PageBlock[]>(managedPages[0].blocks),[saved,setSaved]=useState(false);
+ const page=useMemo(()=>managedPages.find(p=>p.id===pageId)!,[pageId]);
+ function choose(id:string){const next=managedPages.find(p=>p.id===id)!;setPageId(id);setBlocks(next.blocks);}
+ function add(type:BlockType){setBlocks(b=>[...b,{id:"new-"+Date.now(),type,enabled:true,data:{heading:labels[type]}}]);}
+ function move(i:number,d:number){setBlocks(b=>{const n=[...b],j=i+d;if(j<0||j>=n.length)return b;[n[i],n[j]]=[n[j],n[i]];return n;});}
+ return <div className="builder-shell"><header className="builder-topbar"><div><p className="eyebrow">PAGE BUILDER</p><h1>Website Pages</h1></div><div className="builder-actions"><button><Eye size={16}/> Preview</button><button className="cms-primary-button" onClick={()=>{setSaved(true);setTimeout(()=>setSaved(false),1800)}}><Save size={16}/> {saved?"Saved":"Save changes"}</button></div></header>
+ <div className="builder-layout"><aside className="builder-pages"><p className="builder-label">Pages</p>{managedPages.map(p=><button className={page.id===p.id?"active":""} key={p.id} onClick={()=>choose(p.id)}><span>{p.title}</span><small>{p.status}</small></button>)}<button className="builder-add-page"><Plus size={15}/> New page</button></aside>
+ <main className="builder-canvas"><div className="builder-canvas-head"><div><strong>{page.title}</strong><span>{page.slug}</span></div><span className={"builder-status "+page.status}>{page.status}</span></div>{blocks.map((block,i)=><article className={"builder-block "+(block.enabled?"":"disabled")} key={block.id}><div className="builder-block-handle"><GripVertical size={17}/><strong>{labels[block.type]}</strong><span>{block.id}</span></div><div className="builder-block-body"><div><h3>{String(block.data.heading||block.data.title||labels[block.type])}</h3><p>Reusable {labels[block.type].toLowerCase()} block. Content fields will connect to the CMS API.</p></div><div className="builder-block-actions"><button onClick={()=>move(i,-1)} aria-label="Move up"><ArrowUp size={15}/></button><button onClick={()=>move(i,1)} aria-label="Move down"><ArrowDown size={15}/></button><button onClick={()=>setBlocks(b=>b.filter(x=>x.id!==block.id))} aria-label="Delete block"><Trash2 size={15}/></button><button aria-label="Edit block"><Settings2 size={15}/></button></div></div></article>)}<button className="builder-add-block" onClick={()=>add("rich_text")}><Plus size={17}/> Add section</button></main>
+ <aside className="builder-palette"><p className="builder-label">Add a block</p>{palette.map(type=><button key={type} onClick={()=>add(type)}><span>{labels[type]}</span><Plus size={15}/></button>)}<div className="builder-note"><strong>Controlled creative freedom</strong><p>Editors compose premium pages from approved blocks without arbitrary code or CSS.</p></div></aside></div></div>;
+}
