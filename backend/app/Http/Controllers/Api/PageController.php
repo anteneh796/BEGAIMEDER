@@ -1,0 +1,18 @@
+<?php
+namespace App\Http\Controllers\Api;
+use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
+use App\Models\Page;
+use App\Models\PageBlock;
+use App\Models\Revision;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+class PageController extends Controller {
+ public function show(string $slug){return response()->json(Page::with('blocks')->where('slug',$slug)->where('status','published')->firstOrFail());}
+ public function index(Request $request){abort_unless($request->user()->canManage('pages.view'),403);return response()->json(Page::with('blocks')->latest()->paginate(20));}
+ public function store(Request $request){abort_unless($request->user()->canManage('pages.create'),403);$d=$request->validate(['title'=>'required|string|max:255','slug'=>'nullable|string|max:255|unique:pages,slug','status'=>'nullable|in:draft,review,approved,published,scheduled,archived','template'=>'nullable|string|max:100','seo'=>'nullable|array','scheduled_for'=>'nullable|date','blocks'=>'nullable|array']);$blocks=$d['blocks']??[];unset($d['blocks']);$d['slug']=$d['slug']??Str::slug($d['title']);$d['author_id']=$request->user()->id;if(($d['status']??'draft')==='published')$d['published_at']=now();$p=Page::create($d);$this->syncBlocks($p,$blocks);$this->revision($p,$request,'Initial page version');return response()->json($p->load('blocks'),201);}
+ public function update(Request $request,Page $page){abort_unless($request->user()->canManage('pages.edit'),403);$d=$request->validate(['title'=>'sometimes|required|string|max:255','slug'=>'sometimes|required|string|max:255|unique:pages,slug,'.$page->id,'status'=>'sometimes|in:draft,review,approved,published,scheduled,archived','template'=>'nullable|string|max:100','seo'=>'nullable|array','scheduled_for'=>'nullable|date','blocks'=>'nullable|array']);$blocks=$d['blocks']??null;unset($d['blocks']);if(($d['status']??null)==='published'&&!$page->published_at)$d['published_at']=now();$page->update($d);if($blocks!==null)$this->syncBlocks($page,$blocks);$this->revision($page->fresh()->load('blocks'),$request,'Page updated');return response()->json($page->fresh()->load('blocks'));}
+ public function destroy(Request $request,Page $page){abort_unless($request->user()->canManage('pages.delete'),403);$page->delete();return response()->noContent();}
+ private function syncBlocks(Page $p,array $blocks):void{$p->blocks()->delete();foreach($blocks as $i=>$b)PageBlock::create(['page_id'=>$p->id,'type'=>$b['type']??'rich_text','sort_order'=>$i,'data'=>$b['data']??[],'is_visible'=>$b['is_visible']??true]);}
+ private function revision(Page $p,Request $r,string $summary):void{$v=((int)$p->revisions()->max('version'))+1;Revision::create(['revisionable_type'=>Page::class,'revisionable_id'=>$p->id,'version'=>$v,'snapshot'=>$p->toArray(),'created_by'=>$r->user()->id,'change_summary'=>$summary]);AuditLog::create(['user_id'=>$r->user()->id,'action'=>'updated','auditable_type'=>Page::class,'auditable_id'=>$p->id,'ip_address'=>$r->ip(),'user_agent'=>$r->userAgent()]);}
+}
