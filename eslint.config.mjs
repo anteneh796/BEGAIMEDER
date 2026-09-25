@@ -1,9 +1,14 @@
 import { defineConfig, globalIgnores } from "eslint/config";
+import tseslint from "typescript-eslint";
 import nextPlugin from "@next/eslint-plugin-next";
 
 export default defineConfig([
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: { ecmaFeatures: { jsx: true } },
+    },
     plugins: { "@next/next": nextPlugin },
     rules: { ...nextPlugin.configs.recommended.rules },
   },
