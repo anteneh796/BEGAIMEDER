@@ -3,7 +3,7 @@ namespace App\Jobs;
 use App\Models\MediaAsset;
 use App\Models\MediaVariant;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\InteractsWithQueue;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
