@@ -1,6 +1,4 @@
 <?php
 use Illuminate\Support\Facades\Schedule;
-Schedule::call(function(){
- \App\Models\Content::where('status','scheduled')->whereNotNull('scheduled_for')->where('scheduled_for','<=',now())->update(['status'=>'published','published_at'=>now(),'scheduled_for'=>null]);
- \App\Models\Page::where('status','scheduled')->whereNotNull('scheduled_for')->where('scheduled_for','<=',now())->update(['status'=>'published','published_at'=>now(),'scheduled_for'=>null]);
-})->everyMinute()->name('publish-scheduled-content')->withoutOverlapping();
+Schedule::job(new \App\Jobs\PublishScheduledContent)->everyMinute()->name('publish-scheduled-content')->withoutOverlapping();
+Schedule::command('queue:work --stop-when-empty --tries=3')->everyMinute()->name('phase-4-queue-drain')->withoutOverlapping();
