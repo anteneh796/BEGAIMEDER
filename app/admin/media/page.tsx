@@ -1,6 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
-import { FileText, Image as ImageIcon, PlaySquare, Search, Upload, X } from "lucide-react";
+import { FileText, PlaySquare, Search, Upload, X } from "lucide-react";
 import { mediaAssets, MediaType } from "@/lib/media";
 type Filter="all"|MediaType;
 export default function AdminMediaPage(){
