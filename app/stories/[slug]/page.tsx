@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import { PageHero } from "@/components/page-hero";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { getStory, stories } from "@/lib/cms";
+import { getStory } from "@/lib/cms";
+import { stories } from "@/lib/content";
 
 export function generateStaticParams(){ return stories.map(story=>({slug:story.slug})); }
 
