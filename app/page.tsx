@@ -1,78 +1,89 @@
-import { ArrowRight, CalendarDays, Play, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, CalendarDays, ChevronDown, Play, Sparkles } from "lucide-react";
+import { events, stories } from "@/lib/content";
 
-const stories = [
-  { category: "School Life", title: "Moments that make our community", image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=85" },
-  { category: "Learning", title: "Curiosity is where learning begins", image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=85" },
-  { category: "Community", title: "Growing together, every day", image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=85" }
+const journey = [
+  ["01", "Kindergarten", "Playful foundations, confidence and a love of discovery.", "/academics"],
+  ["02", "Lower Primary", "Strong foundations through active, purposeful learning.", "/academics"],
+  ["03", "Upper Primary", "Deeper thinking, growing independence and wider horizons.", "/academics"],
+  ["04", "Grades 7–8", "Subject depth, leadership and readiness for what comes next.", "/academics"],
+];
+
+const reasons = [
+  ["01", "Known as an individual", "Children are supported by adults who notice progress, challenge thoughtfully and build trust."],
+  ["02", "Learning with purpose", "Classroom knowledge connects with questions, projects, creativity and the world beyond school."],
+  ["03", "Growing character", "Communication, responsibility, collaboration and confidence grow alongside academic foundations."],
 ];
 
 export default function Home() {
   return (
     <main>
-      <header className="topbar">
-        <div className="container nav">
-          <a className="brand" href="#">
-            <span className="brand-mark">B</span>
-            <span><strong>BEGAIMEDER</strong><small>ACADEMY</small></span>
-          </a>
-          <nav className="links">
-            <a href="#about">About</a><a href="#academics">Academics</a><a href="#life">School Life</a><a href="#stories">Stories</a><a href="#admissions">Admissions</a>
-          </nav>
-          <a className="btn btn-dark nav-cta" href="#contact">Contact us <ArrowRight size={16}/></a>
-        </div>
-      </header>
-
-      <section className="hero">
-        <div className="hero-media" />
-        <div className="hero-overlay" />
-        <div className="container hero-content">
-          <div className="hero-copy">
-            <div className="eyebrow">KG — GRADE 8 · BEGAIMEDER ACADEMY</div>
-            <h1 className="display">Where curiosity becomes capability.</h1>
-            <p>Discover a learning community built to help every child grow with confidence, character and purpose.</p>
-            <div className="hero-actions">
-              <a className="btn btn-primary" href="#admissions">Explore admissions <ArrowRight size={17}/></a>
-              <a className="btn btn-outline" href="#story"><Play size={16} fill="currentColor"/> Discover our story</a>
-            </div>
+      <section className="home-hero">
+        <div className="home-hero-image" />
+        <div className="home-hero-shade" />
+        <div className="home-nav-wrap"><div className="home-nav">
+          <Link href="/" className="home-brand"><span>B</span><strong>BEGAIMEDER<small>ACADEMY</small></strong></Link>
+          <nav aria-label="Homepage navigation"><Link href="/about">About</Link><Link href="/academics">Academics</Link><Link href="/school-life">School Life</Link><Link href="/stories">Stories</Link><Link href="/media">Media</Link></nav>
+          <Link href="/admissions" className="home-nav-cta">Admissions <ArrowRight size={15}/></Link>
+        </div></div>
+        <div className="container home-hero-content">
+          <div className="home-hero-copy">
+            <span className="home-kicker">KG — GRADE 8 · BEGAIMEDER ACADEMY</span>
+            <h1>Where curiosity becomes capability.</h1>
+            <p>A modern learning community where children build strong foundations, discover their strengths and grow with confidence, character and purpose.</p>
+            <div className="home-actions"><Link className="button button-gold" href="/admissions">Explore admissions <ArrowRight size={17}/></Link><Link className="button button-ghost" href="/about"><Play size={15} fill="currentColor"/> Discover our story</Link></div>
           </div>
-          <div className="hero-note"><Sparkles size={16}/> Inspiring minds. Building character. Shaping the future.</div>
+          <div className="home-hero-bottom"><span><Sparkles size={15}/> Curious minds. Grounded people. Connected community.</span><Link href="#journey">Scroll to explore <ChevronDown size={17}/></Link></div>
         </div>
       </section>
 
-      <section className="intro section" id="about">
-        <div className="container intro-grid">
-          <div><div className="eyebrow">Welcome to BEGAIMEDER</div><h2 className="display">A school experience designed around the whole child.</h2></div>
-          <div><p className="lead">From the earliest years through Grade 8, we create space for children to ask better questions, build strong foundations and discover what they can become.</p><a className="text-link" href="#story">Meet the Academy <ArrowRight size={17}/></a></div>
+      <section className="home-intro section">
+        <div className="container home-intro-grid">
+          <div><span className="eyebrow">Welcome to BEGAIMEDER</span><h2>A school experience designed around the whole child.</h2></div>
+          <div><p className="home-lead">From the earliest years through Grade 8, we create space for children to ask better questions, build strong foundations and discover what they can become.</p><Link className="editorial-link" href="/about">Meet the Academy <ArrowRight size={17}/></Link></div>
         </div>
       </section>
 
-      <section className="academics section" id="academics">
+      <section className="home-journey section" id="journey">
         <div className="container">
-          <div className="section-head"><div><div className="eyebrow">The learning journey</div><h2 className="display">From KG to Grade 8.</h2></div><p>Purposeful learning, thoughtful guidance and room to grow.</p></div>
-          <div className="levels">
-            {["Kindergarten","Lower Primary","Upper Primary","Grade 7–8"].map((level, i) => <a href="#" className="level" key={level}><span>0{i+1}</span><strong>{level}</strong><ArrowRight size={20}/></a>)}
+          <div className="home-section-heading"><div><span className="eyebrow">The learning journey</span><h2>From KG to Grade 8.</h2></div><p>One connected experience that grows with the learner.</p></div>
+          <div className="journey-list">{journey.map(([n, title, text, href]) => <Link className="journey-row" href={href} key={title}><span>{n}</span><div><h3>{title}</h3><p>{text}</p></div><ArrowRight size={22}/></Link>)}</div>
+        </div>
+      </section>
+
+      <section className="home-philosophy section">
+        <div className="container">
+          <div className="home-section-heading light"><div><span className="eyebrow">Why BEGAIMEDER</span><h2>Ambition with humanity.</h2></div><p>Academic growth matters. So do the people children become along the way.</p></div>
+          <div className="philosophy-grid">{reasons.map(([n, title, text]) => <article key={title}><span>{n}</span><h3>{title}</h3><p>{text}</p></article>)}</div>
+        </div>
+      </section>
+
+      <section className="home-moments section">
+        <div className="container">
+          <div className="home-section-heading"><div><span className="eyebrow">BEGAIMEDER MOMENTS</span><h2>Life beyond the classroom.</h2></div><Link className="editorial-link" href="/media">Open the media library <ArrowRight size={17}/></Link></div>
+          <div className="home-mosaic">
+            <Link href="/media/albums/begaimeder-moments" className="mosaic-main"><div><span>School Life</span><h3>Every day has a story worth remembering.</h3></div></Link>
+            <Link href="/school-life" className="mosaic-card mosaic-one"><div><span>Community</span><h3>Growing together.</h3></div></Link>
+            <Link href="/academics" className="mosaic-card mosaic-two"><div><span>Learning</span><h3>Curiosity in motion.</h3></div></Link>
           </div>
         </div>
       </section>
 
-      <section className="moments section" id="life">
-        <div className="container">
-          <div className="section-head light"><div><div className="eyebrow">BEGAIMEDER MOMENTS</div><h2 className="display">Life beyond the classroom.</h2></div><p>Activities, achievements, celebrations and everyday moments from our community.</p></div>
-          <div className="moment-grid"><div className="moment large"><div><span>School Life</span><h3 className="display">Every day has a story worth remembering.</h3></div></div><div className="moment small"><div><span>Community</span><h3>Growing together.</h3></div></div><div className="moment small alt"><div><span>Activities</span><h3>Curiosity in motion.</h3></div></div></div>
+      <section className="home-stories section">
+        <div className="container"><div className="home-section-heading"><div><span className="eyebrow">Latest from the Academy</span><h2>Stories & moments.</h2></div><Link className="editorial-link" href="/stories">View all <ArrowRight size={17}/></Link></div>
+          <div className="home-story-grid">{stories.map(story => <article className="home-story-card" key={story.id}><Link href={`/stories/${story.slug}`}><img src={story.image} alt="" /><div><span className="eyebrow">{story.category}</span><h3>{story.title}</h3><p>{story.excerpt}</p><span className="story-read">Read story <ArrowRight size={15}/></span></div></Link></article>)}</div>
         </div>
       </section>
 
-      <section className="stories section" id="stories">
-        <div className="container"><div className="section-head"><div><div className="eyebrow">Latest from the Academy</div><h2 className="display">Stories & moments.</h2></div><a className="text-link" href="#">View all <ArrowRight size={17}/></a></div>
-          <div className="story-grid">{stories.map(s => <article className="story" key={s.title}><img src={s.image} alt="" /><div className="story-body"><div className="eyebrow">{s.category}</div><h3>{s.title}</h3><a href="#">Read story <ArrowRight size={16}/></a></div></article>)}</div>
+      <section className="home-events section">
+        <div className="container"><div className="home-section-heading light"><div><span className="eyebrow">What's happening</span><h2>Come be part of it.</h2></div><Link className="editorial-link light-link" href="/events">View events <ArrowRight size={17}/></Link></div>
+          <div className="event-preview">{events.slice(0,3).map(event => <Link href="/events" key={event.id}><span><CalendarDays size={16}/>{event.date}</span><h3>{event.title}</h3><p>{event.time} · {event.location}</p><ArrowRight size={18}/></Link>)}</div>
         </div>
       </section>
 
-      <section className="admission section" id="admissions">
-        <div className="container admission-inner"><div><div className="eyebrow">Begin the journey</div><h2 className="display">A place to learn, belong and become.</h2></div><a className="btn btn-primary" href="#contact">Explore admissions <ArrowRight size={17}/></a></div>
+      <section className="home-admission">
+        <div className="container home-admission-inner"><div><span className="eyebrow">Begin the journey</span><h2>A place to learn, belong and become.</h2><p>Come visit the Academy and discover an environment built for curious, capable young people.</p></div><Link className="button button-dark" href="/admissions">Explore admissions <ArrowRight size={17}/></Link></div>
       </section>
-
-      <footer id="contact"><div className="container footer-grid"><div><a className="brand footer-brand" href="#"><span className="brand-mark">B</span><span><strong>BEGAIMEDER</strong><small>ACADEMY</small></span></a><p>A modern learning community for KG through Grade 8.</p></div><div><span className="footer-label">Explore</span><a href="#about">About</a><a href="#academics">Academics</a><a href="#life">School Life</a></div><div><span className="footer-label">Connect</span><a href="#">Contact</a><a href="#">Admissions</a><a href="#">Social media</a></div></div><div className="container copyright">© {new Date().getFullYear()} BEGAIMEDER ACADEMY. All rights reserved.</div></footer>
     </main>
   );
 }
