@@ -17,8 +17,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
       - name: Install dependencies
         run: npm install
+      - name: Dependency audit
+        run: npm audit --audit-level=high
       - name: Lint
         run: npm run lint
       - name: Build
@@ -43,5 +46,7 @@ jobs:
         run: composer validate --no-check-publish
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Dependency audit
+        run: composer audit --no-interaction
       - name: Run Laravel tests
         run: php artisan test
