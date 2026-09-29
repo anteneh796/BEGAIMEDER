@@ -1,0 +1,3 @@
+<?php
+use Illuminate\Database\Migrations\Migration; use Illuminate\Database\Schema\Blueprint; use Illuminate\Support\Facades\Schema;
+return new class extends Migration { public function up():void{Schema::table('media_assets',function(Blueprint $t){$t->decimal('focal_x',5,2)->default(50);$t->decimal('focal_y',5,2)->default(50);$t->index(['type','visibility','status']);});} public function down():void{Schema::table('media_assets',function(Blueprint $t){$t->dropIndex(['media_assets_type_visibility_status_index']);$t->dropColumn(['focal_x','focal_y']);});} };
