@@ -1,0 +1,5 @@
+import Image from "next/image";
+import { getExperience } from "@/lib/experience";
+import { ExperienceEmpty } from "@/components/experience-empty";
+export const revalidate=60;
+export default async function Achievements(){const d=(await getExperience())?.achievements;if(!d)return <ExperienceEmpty title="Achievements are being prepared."/>;return <main><section className="experience-hero"><div className="container"><span className="eyebrow">{d.eyebrow}</span><h1>{d.title}</h1><p>{d.body}</p></div></section><section className="section"><div className="container achievement-grid">{d.items.map(item=><article className="achievement-card" key={item.year+item.title}><Image src={item.image} alt="" width={900} height={620}/><div><span className="eyebrow">{item.year} · {item.category}</span><h2>{item.title}</h2><p>{item.body}</p></div></article>)}</div></section></main>}
