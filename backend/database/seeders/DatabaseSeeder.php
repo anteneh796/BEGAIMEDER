@@ -1,12 +1,64 @@
 <?php
 namespace Database\Seeders;
-use App\Models\Permission; use App\Models\Role; use Illuminate\Database\Seeder; use App\Models\User; use Illuminate\Support\Facades\Hash;
+use App\Models\Permission; use App\Models\Role; use Illuminate\Database\Seeder; use App\Models\User; use App\Models\Setting; use Illuminate\Support\Facades\Hash;
 class DatabaseSeeder extends Seeder {
  public function run():void{
   $permissions=['pages.view','pages.create','pages.edit','pages.delete','pages.publish','content.create','content.edit','content.delete','content.publish','content.review','media.view','media.upload','media.edit','media.delete','events.create','events.edit','events.delete','users.manage','roles.manage','settings.manage','audit.view','analytics.view'];
   foreach($permissions as $slug)Permission::firstOrCreate(['slug'=>$slug],['name'=>ucwords(str_replace(['.','-'],' ',$slug))]);
   $matrix=['super-admin'=>$permissions,'website-administrator'=>array_values(array_diff($permissions,['roles.manage'])),'content-editor'=>['pages.view','pages.create','pages.edit','content.create','content.edit','content.review','content.publish','media.view','media.upload','media.edit','events.create','events.edit'],'media-manager'=>['media.view','media.upload','media.edit','media.delete'],'admissions-officer'=>[],'communications-officer'=>['content.create','content.edit','content.publish','events.create','events.edit','media.view','media.upload'],'contributor'=>['pages.view','content.create','content.edit','media.view']];
   foreach($matrix as $slug=>$slugs){$role=Role::firstOrCreate(['slug'=>$slug],['name'=>ucwords(str_replace('-',' ',$slug))]);$role->permissions()->sync(Permission::whereIn('slug',$slugs)->pluck('id'));}
+  $experience = [
+   'home'=>[
+    'hero'=>['eyebrow'=>'KG — GRADE 8 · BEGAIMEDER ACADEMY','title'=>'Where curiosity becomes capability.','body'=>'A modern learning community where children build strong foundations, discover their strengths and grow with confidence, character and purpose.','primaryLabel'=>'Explore admissions','primaryHref'=>'/admissions','secondaryLabel'=>'Discover our story','secondaryHref'=>'/about','image'=>'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=2200&q=90'],
+    'intro'=>['eyebrow'=>'Welcome to BEGAIMEDER','title'=>'A school experience designed around the whole child.','body'=>'From the earliest years through Grade 8, we create space for children to ask better questions, build strong foundations and discover what they can become.','linkLabel'=>'Meet the Academy','linkHref'=>'/about'],
+    'journey'=>['eyebrow'=>'The learning journey','title'=>'From KG to Grade 8.','body'=>'One connected experience that grows with the learner.','items'=>[
+      ['number'=>'01','title'=>'Kindergarten','body'=>'Playful foundations, confidence and a love of discovery.','href'=>'/academics/curriculum/early-years'],
+      ['number'=>'02','title'=>'Lower Primary','body'=>'Strong foundations through active, purposeful learning.','href'=>'/academics/curriculum/lower-primary'],
+      ['number'=>'03','title'=>'Upper Primary','body'=>'Deeper thinking, growing independence and wider horizons.','href'=>'/academics/curriculum/upper-primary'],
+      ['number'=>'04','title'=>'Grades 7–8','body'=>'Subject depth, leadership and readiness for what comes next.','href'=>'/academics/curriculum/middle-years']
+    ]],
+    'philosophy'=>['eyebrow'=>'Why BEGAIMEDER','title'=>'Ambition with humanity.','body'=>'Academic growth matters. So do the people children become along the way.','items'=>[
+      ['number'=>'01','title'=>'Known as an individual','body'=>'Children are supported by adults who notice progress, challenge thoughtfully and build trust.'],
+      ['number'=>'02','title'=>'Learning with purpose','body'=>'Classroom knowledge connects with questions, projects, creativity and the world beyond school.'],
+      ['number'=>'03','title'=>'Growing character','body'=>'Communication, responsibility, collaboration and confidence grow alongside academic foundations.']
+    ]],
+    'moments'=>['eyebrow'=>'BEGAIMEDER MOMENTS','title'=>'Life beyond the classroom.','body'=>'A living record of learning, friendship, creativity and community.','linkLabel'=>'Open the media library','linkHref'=>'/media','items'=>[
+      ['label'=>'School Life','title'=>'Every day has a story worth remembering.','image'=>'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1400&q=85','href'=>'/media'],
+      ['label'=>'Community','title'=>'Growing together.','image'=>'https://images.unsplash.com/photo-1529390079861-591de354faf5?auto=format&fit=crop&w=900&q=85','href'=>'/community'],
+      ['label'=>'Learning','title'=>'Curiosity in motion.','image'=>'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=900&q=85','href'=>'/academics']
+    ]],
+    'admissions'=>['eyebrow'=>'Begin the journey','title'=>'A place to learn, belong and become.','body'=>'Come visit the Academy and discover an environment built for curious, capable young people.','label'=>'Explore admissions','href'=>'/admissions']
+   ],
+   'admissions'=>['eyebrow'=>'Admissions','title'=>'A thoughtful journey for every family.','body'=>'From the first conversation to joining the Academy, our admissions team keeps the process clear, welcoming and personal.','steps'=>[
+    ['number'=>'01','title'=>'Start a conversation','body'=>'Tell us about your child and what you are looking for in a school.','action'=>'Contact admissions','href'=>'/contact'],
+    ['number'=>'02','title'=>'Visit & discover','body'=>'Meet the school, ask questions and experience our learning environment.','action'=>'Plan a visit','href'=>'/contact'],
+    ['number'=>'03','title'=>'Apply','body'=>'Our admissions team will guide you through application, placement and next steps.','action'=>'Send an enquiry','href'=>'/contact'],
+    ['number'=>'04','title'=>'Begin together','body'=>'Receive the next-step guidance and prepare for a confident start at BEGAIMEDER.','action'=>'Meet the community','href'=>'/community']
+   ],'reassurance'=>'Families can ask questions at any stage. We are here to help you understand the school before you make an application.'],
+   'principal'=>['eyebrow'=>'Leadership','title'=>'A message from the Principal','name'=>'Principal, BEGAIMEDER ACADEMY','role'=>'Principal','portrait'=>'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=85','quote'=>'Education is at its best when children are known, challenged and encouraged to imagine what is possible.','body'=>'Our purpose is to create a school where strong learning and strong relationships belong together. We want every learner to leave each stage more curious, more capable and more confident in contributing to the world around them.','signature'=>'With warm regards, The Principal'],
+   'teachers'=>['eyebrow'=>'Our people','title'=>'Meet the educators behind the experience.','body'=>'A thoughtful team of teachers and mentors who combine subject expertise with close attention to each learner.','people'=>[
+    ['slug'=>'academic-team','name'=>'Academic Leadership Team','role'=>'Teaching & Learning','department'=>'Academic Leadership','bio'=>'Our academic leaders shape curriculum, support teachers and keep learning purposeful, inclusive and ambitious.','portrait'=>'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1000&q=85','quote'=>'Every learner deserves a clear path to grow.'],
+    ['slug'=>'primary-team','name'=>'Primary Teaching Team','role'=>'Lower & Upper Primary','department'=>'Primary School','bio'=>'Our primary educators build strong foundations through active learning, clear routines, curiosity and meaningful relationships.','portrait'=>'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1000&q=85','quote'=>'The foundations we build early open doors for years to come.'],
+    ['slug'=>'student-life-team','name'=>'Student Life Team','role'=>'Wellbeing & Enrichment','department'=>'Student Life','bio'=>'The student life team supports belonging, leadership, activities and the wider experiences that make school feel like community.','portrait'=>'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1000&q=85','quote'=>'Belonging gives children the confidence to participate fully.']
+   ]],
+   'curriculum'=>['eyebrow'=>'Academics','title'=>'A connected curriculum from KG to Grade 8.','body'=>'Each stage builds on the one before it, balancing foundational knowledge, creativity, communication, problem-solving and character.','programs'=>[
+    ['slug'=>'early-years','title'=>'Early Years','grades'=>'KG','summary'=>'Play, language, early numeracy, discovery and social confidence form the foundations for joyful learning.','focus'=>['Language & literacy','Early mathematics','Creative discovery','Social-emotional growth'],'image'=>'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=1200&q=85'],
+    ['slug'=>'lower-primary','title'=>'Lower Primary','grades'=>'Grades 1–3','summary'=>'Core literacy and numeracy grow alongside science, creativity, digital fluency and learning habits.','focus'=>['Literacy & communication','Mathematics','Science & discovery','Creative learning'],'image'=>'https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=1200&q=85'],
+    ['slug'=>'upper-primary','title'=>'Upper Primary','grades'=>'Grades 4–6','summary'=>'Learners deepen subject understanding while developing research, collaboration, independence and wider perspectives.','focus'=>['Subject depth','Research skills','Collaboration','Digital fluency'],'image'=>'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=85'],
+    ['slug'=>'middle-years','title'=>'Middle Years','grades'=>'Grades 7–8','summary'=>'Students prepare for the next stage through stronger subject pathways, leadership, critical thinking and independent learning.','focus'=>['Critical thinking','Subject pathways','Leadership','Independent learning'],'image'=>'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=85']
+   ]],
+   'achievements'=>['eyebrow'=>'Achievements','title'=>'Moments worth celebrating.','body'=>'A place to record the academic, creative, sporting, community and personal achievements of our learners and school community.','items'=>[
+    ['year'=>'2026','title'=>'Learning in action','body'=>'A showcase of projects, presentations and collaborative work across the Academy.','category'=>'Learning','image'=>'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=85'],
+    ['year'=>'2026','title'=>'Community contribution','body'=>'Learners and families coming together around service, creativity and school life.','category'=>'Community','image'=>'https://images.unsplash.com/photo-1529390079861-591de354faf5?auto=format&fit=crop&w=1200&q=85'],
+    ['year'=>'2025','title'=>'Growing confidence','body'=>'Celebrating the small and significant milestones that show learners becoming more independent.','category'=>'Student Life','image'=>'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1200&q=85']
+   ]],
+   'history'=>['eyebrow'=>'Our story','title'=>'Built around a simple belief: every child can grow.','body'=>'The Academy’s history is a story of people, learning and a community committed to giving children a strong beginning and wider horizons.','milestones'=>[
+    ['year'=>'Foundation','title'=>'The idea begins with community','body'=>'BEGAIMEDER begins with a commitment to a warm, purposeful learning environment for children and families.','image'=>'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=85'],
+    ['year'=>'Growth','title'=>'A connected learning journey','body'=>'The school grows its academic and student-life experience around a continuous KG through Grade 8 pathway.','image'=>'https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=1200&q=85'],
+    ['year'=>'Today','title'=>'Learning, belonging and becoming','body'=>'Today the Academy continues to build a modern school experience where strong foundations and human connection go together.','image'=>'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=85']
+   ]]
+  ];
+  foreach($experience as $key=>$value) Setting::updateOrCreate(['key'=>'experience.'.$key],['value'=>$value,'group'=>'experience','is_public'=>true]);
   $email=env('BOOTSTRAP_ADMIN_EMAIL');$password=env('BOOTSTRAP_ADMIN_PASSWORD');if($email&&$password){$admin=User::firstOrCreate(['email'=>$email],['name'=>'BEGAIMEDER Administrator','password'=>Hash::make($password),'is_active'=>true,'email_verified_at'=>now()]);$admin->roles()->sync([Role::where('slug','super-admin')->value('id')]);}
  }
 }
