@@ -1,0 +1,12 @@
+"use client";
+import { useState } from "react";
+
+const sections=["home","admissions","principal","teachers","curriculum","achievements","history"];
+const api=()=>process.env.NEXT_PUBLIC_API_URL||process.env.NEXT_PUBLIC_BACKEND_URL||"http://127.0.0.1:8000";
+
+export default function ExperienceStudio(){
+ const [section,setSection]=useState("home"); const [payload,setPayload]=useState("{}"); const [status,setStatus]=useState("");
+ async function load(key=section){setSection(key);setStatus("Loading…");try{const token=localStorage.getItem("begaimeder_token")||"";const r=await fetch(api()+"/api/v1/admin/experience/"+key,{headers:{Authorization:"Bearer "+token,Accept:"application/json"}});const j=await r.json();setPayload(JSON.stringify(j.value??{},null,2));setStatus(r.ok?"Loaded":"Unable to load — sign in to the CMS API.");}catch{setStatus("Backend unavailable.");}}
+ async function save(){setStatus("Saving…");try{const value=JSON.parse(payload);const token=localStorage.getItem("begaimeder_token")||"";const r=await fetch(api()+"/api/v1/admin/experience/"+section,{method:"PUT",headers:{"Content-Type":"application/json",Authorization:"Bearer "+token},body:JSON.stringify({value,is_public:true})});setStatus(r.ok?"Published to the public CMS.":"Save rejected — check your CMS session and permissions.");}catch{setStatus("Invalid JSON or backend unavailable.");}}
+ return <main className="admin-page"><div className="admin-page-heading"><div><span className="eyebrow">Phase 6</span><h1>Experience Studio</h1><p>One control surface for the cinematic homepage and school storytelling systems.</p></div><button className="button button-dark" onClick={save}>Publish changes</button></div><div className="experience-studio"><aside><span className="admin-nav-label">Experience modules</span>{sections.map(key=><button className={section===key?"active":""} key={key} onClick={()=>load(key)}>{key[0].toUpperCase()+key.slice(1)}</button>)}</aside><section><div className="studio-toolbar"><div><strong>{section}</strong><span>CMS JSON payload · public visibility enabled</span></div><span>{status}</span></div><textarea aria-label={section+" content payload"} value={payload} onChange={e=>setPayload(e.target.value)} spellCheck={false}/><p className="studio-help">The backend validates this as structured content. Media URLs should point to approved school assets or your configured object storage/CDN.</p></section></div></main>;
+}
