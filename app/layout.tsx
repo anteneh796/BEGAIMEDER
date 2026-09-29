@@ -14,4 +14,4 @@ export const metadata: Metadata = {
  twitter:{card:"summary_large_image",title:"BEGAIMEDER ACADEMY",description:"KG through Grade 8 — learning, belonging and becoming."},
  robots:{index:true,follow:true},
 };
-export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en"><body><a className="skip-link" href="#main-content">Skip to content</a><SiteStructuredData/><PageViewTracker/><div id="main-content">{children}</div></body></html>;}
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth"><body><a className="skip-link" href="#main-content">Skip to content</a><SiteStructuredData/><PageViewTracker/><div id="main-content">{children}</div></body></html>;}
