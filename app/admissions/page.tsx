@@ -1,3 +1,10 @@
-import { PageHero } from "@/components/page-hero"; import { SiteHeader } from "@/components/site-header"; import { SiteFooter } from "@/components/site-footer";
-const steps=[["01","Start a conversation","Tell us about your child and what you are looking for in a school."],["02","Visit & discover","Meet the school, ask questions and experience our learning environment."],["03","Apply","Our admissions team will guide you through the application and next steps."]];
-export default function AdmissionsPage(){return <><SiteHeader/><main><PageHero eyebrow="Admissions" title="Come and see what school can become." text="We welcome families who want a thoughtful, ambitious and caring KG through Grade 8 education." image="https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1800&q=85" cta={{label:"Contact admissions",href:"/contact"}}/><section className="content-section"><span className="eyebrow">How it works</span><h2 className="section-title">A clear path for families.</h2><div className="steps-grid">{steps.map(([n,t,d])=><article key={n}><span>{n}</span><h3>{t}</h3><p>{d}</p></article>)}</div></section><section className="admissions-panel"><div><span className="eyebrow eyebrow-light">Admissions desk</span><h2>Have a question?</h2><p>Our team can help with availability, age/grade placement, visits and the application process.</p></div><a className="button button-light" href="/contact">Speak with us →</a></section></main><SiteFooter/></>}
+import { ArrowRight, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
+import { getExperience } from "@/lib/experience";
+import { ExperienceEmpty } from "@/components/experience-empty";
+export const revalidate=60;
+export default async function Admissions(){
+ const data=(await getExperience())?.admissions;
+ if(!data)return <ExperienceEmpty title="Admissions information is being prepared." />;
+ return <main><section className="experience-hero"><div className="container"><span className="eyebrow">{data.eyebrow}</span><h1>{data.title}</h1><p>{data.body}</p></div></section><section className="section"><div className="container"><div className="experience-steps">{data.steps.map(step=><article className="experience-step" key={step.number}><span className="step-number">{step.number}</span><div><h2>{step.title}</h2><p>{step.body}</p><Link className="editorial-link" href={step.href}>{step.action}<ArrowRight size={16}/></Link></div><CheckCircle2 size={23}/></article>)}</div><div className="experience-reassurance"><span className="eyebrow">A thoughtful start</span><p>{data.reassurance}</p></div></div></section></main>;
+}
