@@ -1,0 +1,5 @@
+import Image from "next/image";
+import { getExperience } from "@/lib/experience";
+import { ExperienceEmpty } from "@/components/experience-empty";
+export const revalidate=60;
+export default async function Principal(){const d=(await getExperience())?.principal;if(!d)return <ExperienceEmpty title="The principal's editorial is being prepared."/>;return <main><section className="experience-hero"><div className="container"><span className="eyebrow">{d.eyebrow}</span><h1>{d.title}</h1></div></section><section className="section"><div className="container principal-grid"><div className="principal-portrait"><Image src={d.portrait} alt={d.name} width={900} height={1100}/></div><article><span className="eyebrow">{d.role}</span><h2 className="p6-display">{d.name}</h2><blockquote>“{d.quote}”</blockquote><p className="p6-lead">{d.body}</p><p className="principal-signature">{d.signature}</p></article></div></section></main>}
