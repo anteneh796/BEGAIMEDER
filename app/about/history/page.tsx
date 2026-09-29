@@ -1,0 +1,5 @@
+import Image from "next/image";
+import { getExperience } from "@/lib/experience";
+import { ExperienceEmpty } from "@/components/experience-empty";
+export const revalidate=60;
+export default async function History(){const d=(await getExperience())?.history;if(!d)return <ExperienceEmpty title="Our history is being prepared."/>;return <main><section className="experience-hero"><div className="container"><span className="eyebrow">{d.eyebrow}</span><h1>{d.title}</h1><p>{d.body}</p></div></section><section className="section"><div className="container timeline">{d.milestones.map(m=><article className="timeline-item" key={m.year}><div className="timeline-year">{m.year}</div><div className="timeline-dot"/><div className="timeline-copy"><Image src={m.image} alt="" width={1000} height={620}/><h2>{m.title}</h2><p>{m.body}</p></div></article>)}</div></section></main>}
